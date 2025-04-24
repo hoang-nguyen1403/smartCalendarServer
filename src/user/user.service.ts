@@ -3,6 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
+type SafeUser = Omit<User, 'password'> & { password?: undefined };
+
 
 @Injectable()
 export class UserService {
@@ -14,21 +18,26 @@ export class UserService {
 
   // private prisma: PrismaClient = new PrismaClient();
 
-  async create(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data });
+  async create(data: Prisma.UserCreateInput): Promise<SafeUser> {
+    const hashedPassword = await bcrypt.hash(data.password as string, 10);
+    const user = await this.prisma.user.create({
+      data: { ...data, password: hashedPassword },
+    });
+    const { password, ...safeUser } = user;
+    return safeUser;
   }
-  async createWithParams(
-    userName: string,
-    email: string,
-    password: string,
-  ): Promise<User> {
-    return this.prisma.user.create({
+
+  async createWithParams(userName: string, email: string, password: string): Promise<SafeUser> {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.prisma.user.create({
       data: {
         name: userName,
         email,
-        password,
+        password: hashedPassword,
       },
     });
+    const { password: _, ...safeUser } = user;
+    return safeUser;
   }
 
   async findAll(): Promise<User[]> {

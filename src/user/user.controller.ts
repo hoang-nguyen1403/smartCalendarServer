@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Headers, HttpException, HttpStatus, NotFoundException, Param, Post, Req, Patch, Delete, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags, ApiOperation } from '@nestjs/swagger';
-import { UserLoginDto } from './dto';
+import { UserLoginDto,UserDTO } from './dto';
 import { UserService } from './user.service';
 // import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,25 +17,25 @@ export class UserController {
     ) { }
 
     @Post()
-    create(@Body() createUserDto: Prisma.UserCreateInput) {
-      return this.userService.create(createUserDto);
+    create(@Body() createUserDto: UserDTO) {
+        return this.userService.create(createUserDto);
     }
   
     @Post(':userName/:email/:password')
     @ApiOperation({
-      summary: 'Create New User',
-      description: `
-          * username: user name
-          * email: provide user email
-          * password: provide user password
-          `,
+        summary: 'Create New User',
+        description: `
+            * username: user name
+            * email: provide user email
+            * password: provide user password
+            `,
     })
     createFromParams(
-      @Param('userName') userName: string,
-      @Param('email') email: string,
-      @Param('password') password: string,
+        @Param('userName') userName: string,
+        @Param('email') email: string,
+        @Param('password') password: string,
     ) {
-      return this.userService.createWithParams(userName, email, password);
+        return this.userService.createWithParams(userName, email, password);
     }
     @Get()
     findAll() {
