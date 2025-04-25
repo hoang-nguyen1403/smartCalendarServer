@@ -65,6 +65,12 @@ jobs:
     - name: Migrate prisma
       run : npx prisma migrate dev --name init
 
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: node-app
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
   deploy:
     permissions:
       contents: none
