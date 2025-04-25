@@ -62,10 +62,10 @@ jobs:
         docker compose up -d
         sleep 10 # Wait for services to fully start
         docker compose ps
-
+        
     - name: Migrate prisma
       run : npx prisma migrate dev --name init
 
-    - name: Tear downgit ad
+    - name: Tear down
       if: always()
       run: docker compose down
