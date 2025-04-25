@@ -110,4 +110,3 @@ npm install @prisma/client
 npx prisma migrate dev --name init
 
 
-test CICD test
