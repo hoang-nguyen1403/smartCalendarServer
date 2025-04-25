@@ -67,6 +67,6 @@ jobs:
     - name: Migrate prisma
       run : npx prisma migrate dev --name init
 
-    - name: Tear downgit ad
+    - name: Tear down
       if: always()
       run: docker compose down
