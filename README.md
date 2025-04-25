@@ -109,5 +109,4 @@ npm install @prisma/client
 - create database and generate client
 npx prisma migrate dev --name init
 
-test
-testaaa
+
