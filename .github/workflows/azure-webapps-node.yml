@@ -64,8 +64,6 @@ jobs:
         
     - name: Migrate prisma
       run : npx prisma migrate dev --name init
-    - name: start 
-      run: yarn start:dev
 
   deploy:
     permissions:
