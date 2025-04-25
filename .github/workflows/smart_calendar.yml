@@ -58,11 +58,6 @@ jobs:
         docker compose up -d
         sleep 10 # Wait for services to fully start
         docker compose ps
-
-    - name: Run tests (example)
-      run: |
-        docker-compose up --build
-
     
     - name: Migrate prisma
       run : npx prisma migrate dev --name init
