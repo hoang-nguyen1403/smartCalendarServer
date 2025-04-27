@@ -42,29 +42,14 @@ jobs:
         args: '. --sarif --output results.sarif || true'
         node-version: ${{ matrix.node-version}}
         cache: 'npm'
-    - run: npm ci
+    - run: npm i
     - run : npm install --global yarn    
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Install Docker and Docker Compose
-      run: |
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sh get-docker.sh
-        sudo usermod -aG docker $USER
-        newgrp docker
-        docker version
-        docker compose version || echo "Docker Compose v2 is now included in Docker CLI"
-
-    - name: Run Docker Compose
-      run: |
-        docker compose up -d
-        sleep 10 # Wait for services to fully start
-        docker compose ps
         
-    - name: Migrate prisma
-      run : npx prisma migrate dev --name init
+    - name: Check prisma
+      run : npx prisma db pull
+    - name: Check prisma migrate
+      run : npx prisma migrate status
+
 
     - name: Tear down
       if: always()
