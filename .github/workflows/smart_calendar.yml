@@ -45,8 +45,9 @@ jobs:
     - run: npm i
     - run : npm install --global yarn    
         
-    - name: Migrate prisma
+    - name: Check prisma
       run : npx prisma db pull
+    - name: Check prisma migrate
       run : npx prisma migrate status
 
 
