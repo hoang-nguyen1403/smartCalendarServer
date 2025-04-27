@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Req, Param, Body } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+// import { Request } from 'express';
 import { AppService } from './app.service';
-
 
 @Controller()
 export class AppController {
@@ -11,17 +10,11 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-  
 
-  @Get("getId/:id")
-  getId(@Req() req:Request){
-    return "Get Hello Id"
-  }
-
-  @Post("postId/:email")
-  postHello(@Body() body,  @Param("email") params ){
-    console.log(params)
-    return "Post Hello param"
+  @Post('postId/:email')
+  postHello(@Body() body, @Param('email') params) {
+    console.log(params);
+    return 'Post Hello param';
   }
 
   @Post(':soMot/:soHai')

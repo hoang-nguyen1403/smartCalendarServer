@@ -1,43 +1,50 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 type SafeUser = Omit<User, 'password'> & { password?: undefined };
 
+async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
 
 @Injectable()
 export class UserService {
-  constructor(
-    // private jwt: JwtService,
-    private prisma: PrismaService,
-    private config: ConfigService,
-  ) {}
-
-  // private prisma: PrismaClient = new PrismaClient();
+  constructor(private prisma: PrismaService) {}
 
   async create(data: Prisma.UserCreateInput): Promise<SafeUser> {
-    const hashedPassword = await bcrypt.hash(data.password as string, 10);
-    const user = await this.prisma.user.create({
+    const hashedPassword = await hashPassword(data.password as string);
+    const userWithoutPassword = await this.prisma.user.create({
       data: { ...data, password: hashedPassword },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     });
-    const { password, ...safeUser } = user;
-    return safeUser;
+    return userWithoutPassword;
   }
 
-  async createWithParams(userName: string, email: string, password: string): Promise<SafeUser> {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.prisma.user.create({
+  async createWithParams(
+    userName: string,
+    email: string,
+    password: string,
+  ): Promise<SafeUser> {
+    const hashedPassword = await hashPassword(password);
+    const userWithoutPassword = await this.prisma.user.create({
       data: {
         name: userName,
         email,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     });
-    const { password: _, ...safeUser } = user;
-    return safeUser;
+    return userWithoutPassword;
   }
 
   async findAll(): Promise<User[]> {
@@ -58,6 +65,7 @@ export class UserService {
   async remove(id: number): Promise<User> {
     return this.prisma.user.delete({ where: { id } });
   }
+
   async updateUserAndProfile(
     userId: number,
     userData: Prisma.UserUpdateInput,
@@ -74,48 +82,4 @@ export class UserService {
       include: { profile: true },
     });
   }
-
-  // async uploadAvatar(id: number, filename: string): Promise<boolean> {
-  //     await this.prisma.nguoi_dung.update({
-  //         data: { hinh_dai_dien: filename },
-  //         where: {
-  //             id
-  //         }
-  //     })
-
-  //     return true;
-  // }
-
-  // async login(email: string, mat_khau: string): Promise<any> {
-
-  //     let checkEmail = await this.prisma.nguoi_dung.findFirst({
-  //         where: {
-  //             email
-  //         }
-  //     })
-  //     if (checkEmail) {
-  //         //email đúng
-  //         if (checkEmail.mat_khau == mat_khau) {
-  //             let token = this.jwt.sign(checkEmail, { expiresIn: "2d", secret: this.config.get("SECRET_KEY") });
-
-  //             //pass đúng
-  //             return {
-  //                 check: true,
-  //                 data: token
-  //             };
-  //         } else {
-  //             //pass sai
-  //             return {
-  //                 check: false,
-  //                 data: "Mật khẩu sai !"
-  //             };
-  //         }
-  //     } else {
-  //         //email sai
-  //         return {
-  //             check: false,
-  //             data: "Email sai"
-  //         };;
-  //     }
-  // }
 }
