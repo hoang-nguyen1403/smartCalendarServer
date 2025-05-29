@@ -36,27 +36,27 @@ import { Prisma } from '@prisma/client';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: UserDTO) {
-    return this.userService.create(createUserDto);
-  }
+  // @Post()
+  // create(@Body() createUserDto: UserDTO) {
+  //   return this.userService.create(createUserDto);
+  // }
 
-  @Post(':userName/:email/:password')
-  @ApiOperation({
-    summary: 'Create New User',
-    description: `
-            * username: user name
-            * email: provide user email
-            * password: provide user password
-            `,
-  })
-  createFromParams(
-    @Param('userName') userName: string,
-    @Param('email') email: string,
-    @Param('password') password: string,
-  ) {
-    return this.userService.createWithParams(userName, email, password);
-  }
+  // @Post(':userName/:email/:password')
+  // @ApiOperation({
+  //   summary: 'Create New User',
+  //   description: `
+  //           * username: user name
+  //           * email: provide user email
+  //           * password: provide user password
+  //           `,
+  // })
+  // createFromParams(
+  //   @Param('userName') userName: string,
+  //   @Param('email') email: string,
+  //   @Param('password') password: string,
+  // ) {
+  //   return this.userService.createWithParams(userName, email, password);
+  // }
   @Get()
   findAll() {
     return this.userService.findAll();
