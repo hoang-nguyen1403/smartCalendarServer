@@ -6,19 +6,6 @@ import { User } from '@prisma/client';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 
-const fakeUsers = [
-    {
-        id: 1,
-        email: 'anson@gmail.com',
-        password: 'password',
-    },
-    {
-        id: 2,
-        email: 'jack@gmail.com',
-        password: 'password123',
-    },
-];
-
 @Injectable()
 export class AuthService {
     constructor(private jwtService: JwtService, private userService: UserService) {}
@@ -29,7 +16,7 @@ export class AuthService {
 
         if (!findUser) return null;
         if (await bcrypt.compare(password, findUser.password as string)) {
-            const { password, ...user } = findUser;
+            const { name, password, phone, ...user } = findUser;
             return this.jwtService.sign(user);
         }
 
