@@ -8,11 +8,14 @@ datasource db {
 }
 
 model User {
-  id       Int          @id @default(autoincrement())
-  name     String?      @db.VarChar(255)
-  email    String?      @db.VarChar(255)
-  password String?      @db.VarChar(255)
-  profile  UserProfile? @relation("UserProfile")
+  id            Int             @id @default(autoincrement())
+  name          String?         @db.VarChar(255)
+  email         String?         @db.VarChar(255)
+  password      String?         @db.VarChar(255)
+  phone         String?         @db.VarChar(15)
+  profile       UserProfile?    @relation("UserProfile")
+  events        Event[]         @relation("UserToEvents")
+  notifications Notification[]  @relation("UserToNotifications")
 }
 
 model UserProfile {
@@ -24,4 +27,28 @@ model UserProfile {
   isSuperUser Boolean?  @default(false)
   email       String?   @db.VarChar(255)
   user        User      @relation("UserProfile", fields: [userId], references: [id])
+}
+
+model Event {
+  user_id       Int
+  event_id      Int       @default(autoincrement())
+  startdatetime String    @db.VarChar(255)
+  enddatetime   String    @db.VarChar(255)
+  title         String    @db.VarChar(255)
+  description   String?   @db.VarChar(255)
+  is_completed  Boolean   @default(false)
+  user          User      @relation("UserToEvents", fields: [user_id], references: [id])
+
+  @@id([user_id, event_id])
+}
+
+model Notification {
+  user_id       Int
+  noti_id       Int       @default(autoincrement())
+  time_created  DateTime  @default(now())
+  title         String    @db.VarChar(255)
+  description   String    @db.VarChar(255)
+  user          User      @relation("UserToNotifications", fields: [user_id], references: [id])
+
+  @@id([user_id, noti_id])
 }

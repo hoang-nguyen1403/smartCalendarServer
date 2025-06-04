@@ -9,6 +9,9 @@ export class UserDTO {
   @ApiProperty({ description: 'email', type: String })
   email: string;
 
+  @ApiProperty({ description: 'phone', type: String })
+  phone: string;
+
   @ApiProperty({ description: 'password', type: String, format: 'password' })
   @IsString()
   password: string;
